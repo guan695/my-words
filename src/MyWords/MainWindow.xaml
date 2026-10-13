@@ -1,0 +1,132 @@
+<Window x:Class="MyWords.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="拾词 · My Words" Width="940" Height="720" MinWidth="800" MinHeight="600" Style="{StaticResource {x:Type Window}}" WindowStartupLocation="CenterScreen" Icon="Assets/app.ico" Closing="Window_Closing">
+  <Grid x:Name="RootView" Background="#F5F8FA">
+    <Grid.RowDefinitions><RowDefinition Height="78" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="40" /></Grid.RowDefinitions>
+    <Grid Margin="26,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <Border Width="38" Height="38" Background="{StaticResource Accent}" CornerRadius="9" Margin="0,0,12,0"><TextBlock Text="w" FontFamily="Georgia" FontStyle="Italic" FontSize="29" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,1,0" /></Border>
+        <StackPanel><TextBlock Text="拾词" FontSize="22" FontWeight="SemiBold" /><TextBlock x:Name="StatsLabel" Text="自己的英语单词本" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,2,0,0" /></StackPanel>
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+        <Button x:Name="LibraryNav" Content="单词库" Click="Library_Click" Margin="0,0,8,0" />
+        <Button x:Name="StudyNav" Content="今日学习" Click="Study_Click" Margin="0,0,8,0" />
+        <Button x:Name="SettingsNav" Content="设置" Click="Settings_Click" />
+      </StackPanel>
+    </Grid>
+    <Border Grid.Row="1" x:Name="AddBar" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="0,1" Padding="26,15">
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <TextBlock Text="收一个词" VerticalAlignment="Center" Margin="0,0,16,0" Foreground="{StaticResource Muted}" />
+        <Grid Grid.Column="1">
+          <TextBox x:Name="AddInput" ToolTip="输入英文单词或短语，按 Enter 收藏" AutomationProperties.Name="要收藏的英文单词或短语" MaxLength="100" KeyDown="AddInput_KeyDown" />
+          <TextBlock Text="输入单词或短语，按 Enter 收藏" Foreground="{StaticResource Muted}" Margin="11,0" VerticalAlignment="Center" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=AddInput}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+        </Grid>
+        <Button Grid.Column="2" Content="＋ 收藏" Style="{StaticResource PrimaryButton}" Margin="10,0,0,0" Click="Add_Click" />
+      </Grid>
+    </Border>
+    <Grid Grid.Row="2" x:Name="LibraryPanel" Margin="22,18,22,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="330" /><ColumnDefinition Width="18" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+      <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="128" /></Grid.ColumnDefinitions>
+          <Grid Margin="0,0,8,0">
+            <TextBox x:Name="SearchInput" ToolTip="搜索单词或释义" AutomationProperties.Name="搜索单词或释义" TextChanged="Search_Changed" />
+            <TextBlock Text="搜索单词或释义" Foreground="{StaticResource Muted}" Margin="11,0" VerticalAlignment="Center" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=SearchInput}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+          </Grid>
+          <ComboBox x:Name="SortInput" Grid.Column="1" SelectedIndex="0" SelectionChanged="Sort_Changed" AutomationProperties.Name="单词排序">
+            <ComboBoxItem Content="重复次数 ↓" /><ComboBoxItem Content="字母 A–Z" /><ComboBoxItem Content="字母 Z–A" /><ComboBoxItem Content="默认顺序" />
+          </ComboBox>
+        </Grid>
+        <ListBox x:Name="WordsList" Grid.Row="1" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Words_SelectionChanged" AutomationProperties.Name="单词列表">
+          <ListBox.ItemTemplate><DataTemplate>
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+              <StackPanel><TextBlock Text="{Binding Text}" FontFamily="Georgia" FontSize="21" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Brief}" Foreground="{StaticResource Muted}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,6,8,0" /></StackPanel>
+              <TextBlock Grid.Column="1" Text="{Binding RepeatLabel}" Foreground="{StaticResource Accent}" FontSize="11" VerticalAlignment="Top" Margin="8,5,0,0" />
+            </Grid>
+          </DataTemplate></ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock Grid.Row="1" x:Name="EmptyLibrary" Text="从上方收藏第一个词。&#x0a;也可以在设置中连接 Manggo。" Foreground="{StaticResource Muted}" TextAlignment="Center" LineHeight="25" TextWrapping="Wrap" VerticalAlignment="Center" IsHitTestVisible="False" />
+        <TextBlock Grid.Row="2" x:Name="ListCountLabel" Foreground="{StaticResource Muted}" FontSize="11" Margin="13,12,0,8" />
+      </Grid>
+      <Border Grid.Column="2" Background="White" CornerRadius="8" BorderBrush="{StaticResource Line}" BorderThickness="1">
+        <Grid>
+          <StackPanel x:Name="NoSelection" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="25"><TextBlock Text="让每个生词留下来" FontSize="22" FontFamily="Microsoft YaHei UI" HorizontalAlignment="Center" /><TextBlock Text="选中单词，查看释义和例句。" Foreground="{StaticResource Muted}" Margin="0,12,0,0" HorizontalAlignment="Center" /></StackPanel>
+          <Grid x:Name="DetailPanel" Visibility="Collapsed"><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="27,23,27,18">
+              <StackPanel>
+                <TextBlock x:Name="DetailWord" FontFamily="Georgia" FontSize="36" Foreground="{StaticResource Accent}" TextWrapping="Wrap" />
+                <TextBlock x:Name="DetailPhonetic" FontFamily="Segoe UI" FontSize="16" Foreground="{StaticResource Muted}" Margin="0,8,0,0" TextWrapping="Wrap" />
+                <TextBlock x:Name="DetailCount" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,12,0,0" />
+                <TextBlock Text="释义" Style="{StaticResource SectionLabel}" />
+                <TextBlock x:Name="DetailMeaning" Style="{StaticResource BodyText}" FontSize="15" />
+                <TextBlock Text="例句" Style="{StaticResource SectionLabel}" />
+                <Border Background="#F1F7F5" CornerRadius="5" Padding="14,12"><StackPanel>
+                  <TextBlock x:Name="DetailExample" FontFamily="Georgia" FontSize="17" TextWrapping="Wrap" LineHeight="26" />
+                  <TextBlock x:Name="DetailTranslation" Foreground="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,7,0,0" LineHeight="22" />
+                </StackPanel></Border>
+                <TextBlock Text="常用搭配" Style="{StaticResource SectionLabel}" /><TextBlock x:Name="DetailCollocations" Style="{StaticResource BodyText}" />
+                <TextBlock Text="记忆提示" Style="{StaticResource SectionLabel}" /><TextBlock x:Name="DetailMemory" Style="{StaticResource BodyText}" />
+                <TextBlock x:Name="DetailSource" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,18,0,0" TextWrapping="Wrap" />
+              </StackPanel>
+            </ScrollViewer>
+            <Border Grid.Row="1" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="18,12"><DockPanel>
+              <Button Content="删除" DockPanel.Dock="Right" Click="Delete_Click" Padding="10,7" Foreground="#9B5149" />
+              <StackPanel Orientation="Horizontal"><Button x:Name="GenerateButton" Content="AI 整理" Click="Generate_Click" Style="{StaticResource PrimaryButton}" Padding="13,7" /><Button Content="编辑" Click="Edit_Click" Margin="8,0,0,0" Padding="13,7" /></StackPanel>
+            </DockPanel></Border>
+          </Grid>
+        </Grid>
+      </Border>
+    </Grid>
+    <Grid Grid.Row="2" x:Name="StudyPanel" Visibility="Collapsed" Margin="40,25,40,12">
+      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="8" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+      <DockPanel Margin="0,0,0,15"><TextBlock x:Name="StudyProgress" FontSize="16" FontWeight="SemiBold" /><TextBlock Text="先回忆，再翻开" Foreground="{StaticResource Muted}" HorizontalAlignment="Right" /></DockPanel>
+      <ProgressBar x:Name="StudyProgressBar" Grid.Row="1" Height="4" BorderThickness="0" Foreground="{StaticResource Accent}" Background="#E1EBE7" Maximum="20" />
+      <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="{StaticResource Line}" BorderThickness="1" Margin="0,18,0,0" Padding="32,25">
+        <Grid><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+          <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+            <TextBlock x:Name="StudyWord" FontFamily="Georgia" FontSize="44" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,20,0,10" Foreground="{StaticResource Accent}" />
+            <TextBlock x:Name="StudyHint" Foreground="{StaticResource Muted}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,5,0,22" />
+            <StackPanel x:Name="StudyAnswer" Visibility="Collapsed" MaxWidth="570">
+              <TextBlock x:Name="StudyPhonetic" FontFamily="Segoe UI" FontSize="16" Foreground="{StaticResource Muted}" Margin="0,0,0,10" />
+              <TextBlock x:Name="StudyMeaning" TextWrapping="Wrap" FontSize="17" LineHeight="27" />
+              <TextBlock x:Name="StudyExample" FontFamily="Georgia" FontSize="19" TextWrapping="Wrap" LineHeight="29" Margin="0,19,0,8" />
+              <TextBlock x:Name="StudyTranslation" Foreground="{StaticResource Muted}" TextWrapping="Wrap" LineHeight="24" />
+              <TextBlock x:Name="StudyMemory" TextWrapping="Wrap" Foreground="{StaticResource Muted}" LineHeight="24" Margin="0,18,0,12" />
+            </StackPanel>
+          </StackPanel></ScrollViewer>
+          <StackPanel Grid.Row="1" Margin="0,20,0,0">
+            <Button x:Name="RevealButton" Content="显示答案" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Center" MinWidth="170" Click="Reveal_Click" />
+            <StackPanel x:Name="RatingButtons" Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Center">
+              <Button Content="忘记了" Tag="forgotten" Click="Rate_Click" MinWidth="104" /><Button Content="模糊" Tag="fuzzy" Click="Rate_Click" MinWidth="104" Margin="10,0" /><Button Content="记住了" Tag="known" Click="Rate_Click" MinWidth="104" Style="{StaticResource PrimaryButton}" />
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Grid>
+    <ScrollViewer Grid.Row="2" x:Name="SettingsPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Margin="35,18,35,5">
+      <StackPanel MaxWidth="690" HorizontalAlignment="Stretch">
+        <TextBlock Text="DeepSeek" FontSize="21" FontWeight="SemiBold" />
+        <TextBlock Text="保存后，新收藏的单词会按你的提示词自动整理。" Foreground="{StaticResource Muted}" Margin="0,6,0,15" />
+        <TextBlock Text="API Key" Margin="0,0,0,6" /><PasswordBox x:Name="ApiKeyInput" AutomationProperties.Name="DeepSeek API Key" />
+        <TextBlock Text="仅在这台电脑的当前 Windows 账户中加密保存。" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,6,0,13" />
+        <TextBlock Text="模型" Margin="0,0,0,6" /><ComboBox x:Name="ModelInput" IsEditable="True" AutomationProperties.Name="DeepSeek 模型"><ComboBoxItem Content="deepseek-flash" /><ComboBoxItem Content="deepseek-v4-pro" /><ComboBoxItem Content="deepseek-chat" /></ComboBox>
+        <TextBlock Text="整理提示词" Margin="0,15,0,6" /><TextBox x:Name="PromptInput" AcceptsReturn="True" TextWrapping="Wrap" Height="100" VerticalScrollBarVisibility="Auto" MaxLength="8000" AutomationProperties.Name="整理提示词" />
+        <CheckBox x:Name="AutoEnrichInput" Content="收藏新词后，自动调用 AI 整理" Margin="0,13,0,0" />
+        <Button Content="保存设置" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Click="SaveSettings_Click" Margin="0,15,0,0" />
+        <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Margin="0,24,0,0" Padding="0,21,0,0"><StackPanel>
+          <TextBlock Text="连接 Manggo Pro" FontSize="21" FontWeight="SemiBold" />
+          <TextBlock x:Name="BridgeStatusLabel" Foreground="{StaticResource Accent}" Margin="0,8,0,8" TextWrapping="Wrap" />
+          <TextBlock Text="在 Manggo 插件管理中安装随附的 MyWords.mplugin，再到生词本服务中添加「拾词」。粘贴下面的连接口令即可。" TextWrapping="Wrap" LineHeight="23" />
+          <TextBlock Text="连接地址： http://127.0.0.1:17653/words" Foreground="{StaticResource Muted}" Margin="0,10,0,0" />
+          <Button Content="复制连接口令" HorizontalAlignment="Left" Click="CopyToken_Click" Margin="0,12,0,0" />
+        </StackPanel></Border>
+        <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Margin="0,24,0,0" Padding="0,21,0,20"><StackPanel>
+          <TextBlock Text="本地词库" FontSize="21" FontWeight="SemiBold" />
+          <TextBlock Text="关闭窗口会收起到托盘。点击托盘图标重新打开，右键菜单可以退出。" TextWrapping="Wrap" Foreground="{StaticResource Muted}" LineHeight="23" Margin="0,8,0,12" />
+          <StackPanel Orientation="Horizontal"><Button Content="导出备份" Click="Export_Click" /><Button Content="导入词库" Click="Import_Click" Margin="10,0,0,0" /></StackPanel>
+          <TextBlock x:Name="DataPathLabel" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,0" />
+        </StackPanel></Border>
+      </StackPanel>
+    </ScrollViewer>
+    <DockPanel Grid.Row="3" Margin="26,0" LastChildFill="True"><TextBlock Text="关闭窗口，收起到托盘" DockPanel.Dock="Right" Foreground="{StaticResource Muted}" FontSize="10" VerticalAlignment="Center" Margin="16,0,0,0" /><TextBlock x:Name="StatusText" Foreground="{StaticResource Muted}" FontSize="11" Text="准备好收录第一个单词。" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" /></DockPanel>
+  </Grid>
+</Window>

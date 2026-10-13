@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+.dotnet-home/
+.nuget/
+artifacts/
+release/
+*.user
+*.bak
+.vs/
+.vscode/
+.env
+.env.*
+settings.json
+words.json
+*.pfx
+*.key

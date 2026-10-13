@@ -1,0 +1,25 @@
+{
+  "manifestVersion": 1,
+  "id": "local.mywords.wordbook",
+  "name": "拾词 · My Words",
+  "version": "0.1.0",
+  "description": "将单词收藏到本机拾词单词本，重复收藏时显示累计次数。",
+  "author": "My Words",
+  "icon": "icon.png",
+  "permissions": ["network"],
+  "runtime": { "kind": "bun", "api": "manggo.plugin.v1", "main": "main.js" },
+  "services": [{
+    "id": "wordbook",
+    "kind": "wordbook",
+    "displayName": "拾词",
+    "entry": "add",
+    "config": [{
+      "key": "token",
+      "label": "连接口令",
+      "control": "password",
+      "required": true,
+      "secret": true,
+      "description": "打开拾词 → 设置 → 复制连接口令，粘贴到这里。"
+    }]
+  }]
+}

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>MyWords</AssemblyName>
+    <RootNamespace>MyWords</RootNamespace>
+    <Version>0.1.0</Version>
+    <ApplicationIcon>Assets/app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources>
+    <!-- WPF owns DPI awareness; WinForms is used only for the tray icon. -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets/app.ico" />
+  </ItemGroup>
+</Project>
