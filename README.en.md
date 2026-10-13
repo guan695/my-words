@@ -21,7 +21,7 @@ Looking up a word is easy. Remembering the words you keep looking up is harder. 
 - **AI cards, your prompt.** Generate pronunciation, meaning, examples, translations, collocations and a memory hint with DeepSeek. Edit every field yourself.
 - **Up to 20 words a day.** Review from your own library with recall-first cards and three confidence ratings. The daily list survives restarts.
 - **Manggo Pro integration.** Save directly after a translation and see how often you have saved that word before.
-- **A quiet tray app.** Closing the window hides it; the tray menu can open the library, open daily study or quit.
+- **A quiet tray app.** Closing the window hides it; the tray menu can open the library, open daily study or quit. Only errors trigger tray notifications.
 - **Local storage.** JSON import/export, a previous-save backup and no My Words account required.
 
 ## Get started

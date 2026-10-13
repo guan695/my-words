@@ -20,7 +20,6 @@ public partial class MainWindow : Window
     private string activeStudyDay = "";
     private readonly DispatcherTimer dayTimer = new() { Interval = TimeSpan.FromSeconds(30) };
     public bool AllowClose { get; set; }
-    public event Action? HiddenToTray;
     private WordEntry? Selected => WordsList.SelectedItem as WordEntry;
 
     public MainWindow(AppController controller, string bridgeStatus)
@@ -50,7 +49,7 @@ public partial class MainWindow : Window
     private static DateOnly Today() => DateOnly.FromDateTime(DateTime.Now);
     public void ShowLibrary() { Show(); WindowState = WindowState.Normal; Activate(); Navigate("library"); AddInput.Focus(); }
     public void ShowStudy() { Show(); WindowState = WindowState.Normal; Activate(); Navigate("study"); }
-    public void HideToTray() { Hide(); HiddenToTray?.Invoke(); }
+    public void HideToTray() => Hide();
     private void Window_Closing(object? sender, CancelEventArgs e) { if (!AllowClose) { e.Cancel = true; HideToTray(); } else dayTimer.Stop(); }
     private void Library_Click(object sender, RoutedEventArgs e) => Navigate("library");
     private void Study_Click(object sender, RoutedEventArgs e) => Navigate("study");

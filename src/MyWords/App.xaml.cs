@@ -17,7 +17,6 @@ public partial class App : Application
     private ManggoBridge? bridge;
     private MainWindow? window;
     private bool ownsMutex;
-    private bool explainedTray;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -60,13 +59,9 @@ public partial class App : Application
             menu.Items.Add("退出拾词", null, (_, _) => Dispatcher.Invoke(() => { window.AllowClose = true; Shutdown(); }));
             tray.ContextMenuStrip = menu;
             tray.MouseClick += (_, args) => { if (args.Button == Forms.MouseButtons.Left) window.ShowLibrary(); };
-            window.HiddenToTray += () =>
-            {
-                if (!explainedTray) { tray.ShowBalloonTip(2500, "拾词仍在运行", "点击托盘图标打开，右键可以退出。", Forms.ToolTipIcon.Info); explainedTray = true; }
-            };
             controller.Notice += (message, error) => Dispatcher.BeginInvoke(() =>
             {
-                if (!window.IsVisible) tray?.ShowBalloonTip(2500, error ? "拾词 · 需要处理" : "拾词", message, error ? Forms.ToolTipIcon.Warning : Forms.ToolTipIcon.Info);
+                if (error) tray?.ShowBalloonTip(2500, "拾词 · 需要处理", message, Forms.ToolTipIcon.Warning);
             });
             signalRegistration = ThreadPool.RegisterWaitForSingleObject(showSignal, (_, _) => Dispatcher.BeginInvoke(window.ShowLibrary), null, Timeout.Infinite, false);
             if (Array.IndexOf(e.Args, "--background") < 0) window.ShowLibrary();

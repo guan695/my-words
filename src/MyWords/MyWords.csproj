@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>MyWords</AssemblyName>
     <RootNamespace>MyWords</RootNamespace>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <ApplicationIcon>Assets/app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources>
