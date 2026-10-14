@@ -75,6 +75,7 @@ public partial class MainWindow : Window
             ModelInput.Text = settings.Model;
             PromptInput.Text = settings.Prompt;
             AutoEnrichInput.IsChecked = settings.AutoEnrich;
+            Run(() => AutoStartInput.IsChecked = AutoStart.IsEnabled());
         }
     }
 
@@ -202,6 +203,13 @@ public partial class MainWindow : Window
         if (studyId is not Guid id) return;
         controller.Store.Rate(id, (string)((Button)sender).Tag, Today());
         RefreshStudy();
+    });
+    private void AutoStart_Click(object sender, RoutedEventArgs e) => Run(() =>
+    {
+        var enabled = AutoStartInput.IsChecked == true;
+        try { AutoStart.SetEnabled(enabled); }
+        catch { AutoStartInput.IsChecked = !enabled; throw; }
+        SetStatus(enabled ? "开机自动启动已开启，登录 Windows 后会驻留托盘。" : "开机自动启动已关闭。");
     });
     private void SaveSettings_Click(object sender, RoutedEventArgs e) => Run(() =>
     {

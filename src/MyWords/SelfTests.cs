@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace MyWords;
 
@@ -85,6 +86,28 @@ internal static class SelfTests
             settings.Value.EncryptedApiKey = "";
             settings.Save(settings.Value);
             report.Add("PASS: export/import, corrupt-file preservation and credential encryption");
+
+            // Use a non-startup test key; never enable a real login entry during checks.
+            var startupKeyPath = @"Software\MyWords\SelfTests-" + Guid.NewGuid().ToString("N");
+            try
+            {
+                using var key = Registry.CurrentUser.CreateSubKey(startupKeyPath) ?? throw new IOException("Cannot create isolated registry test key.");
+                key.SetValue("OtherApp", "leave unchanged");
+                Check(!AutoStart.IsEnabled(key), "autostart is disabled when no entry exists");
+                var executable = Path.Combine(directory, "app with spaces", "MyWords.exe");
+                Directory.CreateDirectory(Path.GetDirectoryName(executable)!);
+                File.WriteAllBytes(executable, Array.Empty<byte>());
+                AutoStart.SetEnabled(key, true, executable);
+                Check(AutoStart.IsEnabled(key) && (string?)key.GetValue(AutoStart.ValueName) == $"\"{executable}\" --background", "autostart quotes paths and starts in the tray");
+                Check(key.GetValueKind(AutoStart.ValueName) == RegistryValueKind.String, "autostart stores a literal command path");
+                AutoStart.SetEnabled(key, false, executable);
+                AutoStart.SetEnabled(key, false, executable);
+                Check(!AutoStart.IsEnabled(key) && (string?)key.GetValue("OtherApp") == "leave unchanged", "disabling autostart is idempotent and preserves other entries");
+                Reject(() => AutoStart.SetEnabled(key, true, Path.Combine(directory, "missing.exe")), "missing startup executable is rejected");
+                Check(!AutoStart.IsEnabled(key), "failed autostart changes leave the entry disabled");
+            }
+            finally { Registry.CurrentUser.DeleteSubKeyTree(startupKeyPath, false); }
+            report.Add("PASS: isolated registry startup entry, quoting, background launch and disabling");
 
             using var controller = new AppController(store, settings);
             var reservation = new TcpListener(IPAddress.Loopback, 0); reservation.Start();

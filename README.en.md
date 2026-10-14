@@ -21,7 +21,7 @@ Looking up a word is easy. Remembering the words you keep looking up is harder. 
 - **AI cards, your prompt.** Generate pronunciation, meaning, examples, translations, collocations and a memory hint with DeepSeek. Edit every field yourself.
 - **Up to 20 words a day.** Review from your own library with recall-first cards and three confidence ratings. The daily list survives restarts.
 - **Manggo Pro integration.** Save directly after a translation and see how often you have saved that word before.
-- **A quiet tray app.** Closing the window hides it; the tray menu can open the library, open daily study or quit. Only errors trigger tray notifications.
+- **A quiet tray app.** Closing the window hides it; the tray menu can open the library, open daily study or quit. Only errors trigger tray notifications. Optional launch at Windows sign-in starts directly in the tray.
 - **Local storage.** JSON import/export, a previous-save backup and no My Words account required.
 
 ## Get started
@@ -52,7 +52,9 @@ Words live in `%LOCALAPPDATA%\MyWords\words.json`; settings live beside them. Th
 
 Repeated saves never automatically regenerate a card. Collection timestamps and example history are not stored. Normalization merges case and extra whitespace; inflections such as `run` and `running` remain separate.
 
-Daily selection is weighted toward forgotten, new and repeatedly collected words. This release does not implement a full spaced-repetition scheduler, cloud sync, mobile apps or an auto-start setting. AI-generated information can be edited and should be checked.
+Enable or disable launch at sign-in from Settings → Startup and tray. The checkbox applies immediately for the current Windows user and is off by default. If you move the app folder, toggle it off and on from the new location to update the entry.
+
+Daily selection is weighted toward forgotten, new and repeatedly collected words. This release does not implement a full spaced-repetition scheduler, cloud sync or mobile apps. AI-generated information can be edited and should be checked.
 
 ## Build and contribute
 

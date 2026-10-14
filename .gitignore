@@ -14,3 +14,4 @@ settings.json
 words.json
 *.pfx
 *.key
+*.lnk

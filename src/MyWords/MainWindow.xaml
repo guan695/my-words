@@ -104,7 +104,10 @@
     </Grid>
     <ScrollViewer Grid.Row="2" x:Name="SettingsPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Margin="35,18,35,5">
       <StackPanel MaxWidth="690" HorizontalAlignment="Stretch">
-        <TextBlock Text="DeepSeek" FontSize="21" FontWeight="SemiBold" />
+        <TextBlock Text="启动与托盘" FontSize="21" FontWeight="SemiBold" />
+        <CheckBox x:Name="AutoStartInput" Content="开机自动启动" Click="AutoStart_Click" Margin="0,12,0,0" AutomationProperties.Name="开机自动启动" />
+        <TextBlock Text="勾选后立即生效。登录 Windows 时自动运行并收起到托盘，仅对当前账户生效。" Foreground="{StaticResource Muted}" TextWrapping="Wrap" LineHeight="23" Margin="0,7,0,0" />
+        <TextBlock Text="DeepSeek" FontSize="21" FontWeight="SemiBold" Margin="0,24,0,0" />
         <TextBlock Text="保存后，新收藏的单词会按你的提示词自动整理。" Foreground="{StaticResource Muted}" Margin="0,6,0,15" />
         <TextBlock Text="API Key" Margin="0,0,0,6" /><PasswordBox x:Name="ApiKeyInput" AutomationProperties.Name="DeepSeek API Key" />
         <TextBlock Text="仅在这台电脑的当前 Windows 账户中加密保存。" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,6,0,13" />
